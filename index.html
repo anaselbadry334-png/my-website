@@ -2,6 +2,10 @@
 <html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="الخزنة الرقمية للملفات السرية - موقع آمن لتخزين الملاحظات والصور والفيديوهات الخاصة بك.">
+    <meta name="keywords" content="خزنة، ملفات سرية، حماية، تخزين، Anas El Badry">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>الخزنة الرقمية للملفات السريه 🔐</title>
     <style>
         body { background-color: #121324; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding-top: 80px; }
@@ -75,14 +79,11 @@
         function checkLogin() {
             let e = document.getElementById('email').value;
             let p = document.getElementById('pass').value;
-            
-            // حساب تجريبي
             if (e === "admin" && p === "1234") {
                 document.getElementById('loginBox').style.display='none';
                 document.getElementById('vaultBox').style.display='block';
                 return;
             }
-
             if(localStorage.getItem(e+"_pass") === p && p !== "") {
                 document.getElementById('loginBox').style.display='none';
                 document.getElementById('vaultBox').style.display='block';
