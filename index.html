@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlTag">
+<head>
+    <meta charset="UTF-8">
+    <title>الخزنة الرقمية للملفات السريه 🔐</title>
+    <style>
+        body { background-color: #121324; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding-top: 80px; }
+        
+        /* قائمة اللغات - أسود، شمال علوي، حجم كبير */
+        #langSelect {
+            position: absolute; top: 20px; left: 20px;
+            background-color: #000; color: #fff; padding: 12px 30px;
+            font-size: 20px; border-radius: 8px; cursor: pointer; border: 2px solid #00adb5;
+        }
+
+        .card-box { background-color: #1b1c3a; width: 100%; max-width: 500px; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: none; background: #25274d; color: white; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .btn-main { background-color: #00adb5; color: white; }
+        .btn-green { background-color: #24a15a; color: white; }
+        .media-btn { background-color: #3f416e; color: #ffde7d; padding: 12px; border: 1px dashed #ffde7d; cursor: pointer; display: block; margin-top: 10px; text-align: center; }
+        .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .preview-item { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <select id="langSelect" onchange="changeLanguage(this.value)">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+    </select>
+
+    <div id="loginBox" class="card-box">
+        <h2 id="loginTitle">تسجيل الدخول</h2>
+        <input type="email" id="email" placeholder="الإيميل...">
+        <input type="password" id="pass" placeholder="الباسورد...">
+        <button class="btn-main" onclick="checkLogin()">فتح الخزنة 🔓</button>
+        <p style="cursor:pointer; color:#00adb5" onclick="showReg()">إنشاء حساب جديد</p>
+    </div>
+
+    <div id="regBox" class="card-box" style="display:none;">
+        <h2>إنشاء حساب</h2>
+        <input type="text" id="regName" placeholder="الاسم...">
+        <input type="tel" id="regPhone" placeholder="رقم الهاتف...">
+        <input type="email" id="regEmail" placeholder="الإيميل...">
+        <input type="password" id="regPass" placeholder="الباسورد...">
+        <p>لتأكيد أنك لست روبوت، اكتب: <b>2675</b></p>
+        <input type="text" id="robotCode" placeholder="أدخل الكود هنا...">
+        <button class="btn-green" onclick="saveReg()">حفظ الحساب</button>
+        <p style="cursor:pointer; color:#00adb5" onclick="location.reload()">لديك حساب؟ تسجيل الدخول</p>
+    </div>
+
+    <div id="vaultBox" class="card-box" style="display:none;">
+        <h2>مرحباً في خزنتك 🔓</h2>
+        <textarea id="vaultText" rows="3" placeholder="اكتب ملاحظاتك..."></textarea>
+        <label class="media-btn" for="img">🖼️ صورة (6 ميجا)</label>
+        <input type="file" id="img" accept="image/*" style="display:none;" onchange="handleMedia(this, 'img')">
+        <label class="media-btn" for="vid">🎥 فيديو (6 ميجا)</label>
+        <input type="file" id="vid" accept="video/*" style="display:none;" onchange="handleMedia(this, 'vid')">
+
+        <div id="grid" class="media-grid"></div>
+        <button onclick="alert('✅ تم الحفظ!')" class="btn-green" style="margin-top:20px;">💾 حفظ البيانات</button>
+        <button onclick="location.reload()" style="background:#555; color:white;">خروج 🚪</button>
+    </div>
+
+    <script>
+        function showReg() { document.getElementById('loginBox').style.display='none'; document.getElementById('regBox').style.display='block'; }
+        
+        function saveReg() {
+            if(document.getElementById('robotCode').value !== "2675") { alert("❌ كود الروبوت خاطئ!"); return; }
+            localStorage.setItem(document.getElementById('regEmail').value + "_pass", document.getElementById('regPass').value);
+            alert("تم الحفظ!"); location.reload();
+        }
+
+        function checkLogin() {
+            let e = document.getElementById('email').value;
+            let p = document.getElementById('pass').value;
+            if(localStorage.getItem(e+"_pass") === p && p !== "") {
+                document.getElementById('loginBox').style.display='none';
+                document.getElementById('vaultBox').style.display='block';
+            } else { alert("❌ لا يوجد توافق بين الإيميل والباسورد!"); }
+        }
+
+        function handleMedia(input, type) {
+            if(input.files[0].size > 6 * 1024 * 1024) { alert("❌ حجم الملف كبير جداً (أقصى 6 ميجا)!"); return; }
+            let r = new FileReader();
+            r.onload = (e) => {
+                let item = document.createElement(type === 'img' ? 'img' : 'video');
+                item.src = e.target.result;
+                item.className = "preview-item";
+                if(type === 'vid') item.controls = true;
+                document.getElementById("grid").appendChild(item);
+            };
+            r.readAsDataURL(input.files[0]);
+        }
+
+        function changeLanguage(lang) {
+            const t = {
+                ar: { title: "تسجيل الدخول", email: "الإيميل...", pass: "الباسورد...", btn: "فتح الخزنة" },
+                en: { title: "Login", email: "Email...", pass: "Password...", btn: "Open Vault" },
+                fr: { title: "Connexion", email: "E-mail...", pass: "Mot de passe...", btn: "Ouvrir" }
+            };
+            document.getElementById('loginTitle').innerText = t[lang].title;
+            document.getElementById('email').placeholder = t[lang].email;
+            document.getElementById('pass').placeholder = t[lang].pass;
+            document.querySelector('.btn-main').innerText = t[lang].btn;
+            document.getElementById('htmlTag').dir = (lang === 'ar') ? 'rtl' : 'ltr';
+        }
+    </script>
+</body>
+</html>
